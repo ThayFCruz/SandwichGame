@@ -7,7 +7,7 @@ using System;
 public class Ingredient : MonoBehaviour
 {
     private GameObject ingredient;
-    private bool isBread;
+    public bool isBread;
 
     public void Setup()
     {

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -6856124700683222675}
   - component: {fileID: -4322367402973809610}
   - component: {fileID: 5088588134631900248}
+  - component: {fileID: -6445290597977929933}
   m_Layer: 0
   m_Name: EmptyTile
   m_TagString: Untagged
@@ -95,3 +96,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ingredients: []
+--- !u!65 &-6445290597977929933
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2284844174402059360}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.8, y: 0.10000001, z: 0.8}
+  m_Center: {x: 0, y: 0.050000004, z: 0}
