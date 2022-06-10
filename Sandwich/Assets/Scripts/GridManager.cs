@@ -108,7 +108,7 @@ public class GridManager : MonoBehaviour
             if(ing[0].isBread && ing[ing.Length - 1].isBread)
             {
                 Debug.Log("You win");
-                lastTile.OnMovedPieces();
+                lastTile.CleanTile();
                 level++;
                 NewGame();
             }
