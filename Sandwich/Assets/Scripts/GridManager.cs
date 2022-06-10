@@ -11,21 +11,35 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private List<GridSO> layouts;
 
+    [SerializeField] private DragHandler dragHandler;
+
     private Dictionary<Vector2, Tile> tileDictionary;
 
     private const int GridSize = 4;
 
     private const float GridArea = GridSize * GridSize;
 
+    private int occupiedSlots = 0;
+
+    private int level = 0;
+
     void Start()
     {
+        dragHandler.onMovedPieces += CheckWinning;
         Init();
     }
 
     private void Init()
     {
         CreateEmptyGrid();
-        FillGridWithSO(layouts[0]);
+        FillGridWithSO(layouts[level]);
+    }
+
+    private void NewGame()
+    {
+        occupiedSlots = 0;
+        CleanGrid();
+        FillGridWithSO(layouts[level]);
     }
 
     private void CreateEmptyGrid()
@@ -35,7 +49,7 @@ public class GridManager : MonoBehaviour
         {
             for (int col = 0; col < GridSize; col++)
             {
-                var spawnedTile = Instantiate(tile, new Vector3(lin,0,col), Quaternion.identity,this.transform);
+                var spawnedTile = Instantiate(tile, new Vector3(lin,0,col), Quaternion.identity);
                 spawnedTile.name = $"Tile {lin} {col}";
 
                 spawnedTile.Setup();
@@ -43,7 +57,28 @@ public class GridManager : MonoBehaviour
                 tileDictionary[new Vector2(lin, col)] = spawnedTile;
             }
         }
+    }
 
+    private void CleanGrid()
+    {
+        foreach (Tile tile in tileDictionary.Values)
+        {
+            if (tile.ingredients.Count > 0)
+            {
+                tile.CleanTile();
+            }
+        }
+    }
+
+    private void FillGridWithSO(GridSO grid)
+    {
+        ingredientsQuantity = grid.layout.Count;
+        foreach (Item item in grid.layout)
+        {
+            Tile tile = GetTileAtPosition(item.Position);
+            tile.AddIngredient(item.Ingredient);
+            occupiedSlots++;
+        }
     }
 
     private void FillGridRandomly()
@@ -52,22 +87,45 @@ public class GridManager : MonoBehaviour
 
     }
 
-    private void FillGridWithSO(GridSO grid)
-    {
-        ingredientsQuantity = grid.layout.Count;
-        foreach(Item item in grid.layout)
-        {
-            Tile tile = GetTileAtPosition(item.Position);
-            Vector3 tilePosition = tile.transform.position;
-            Instantiate(item.Ingredient, new Vector3(tilePosition.x, tilePosition.y + 0.2f, tilePosition.z), Quaternion.identity, tile.transform);
-
-            tile.AddIngredient(item.Ingredient);
-        }
-    }
-
     public Tile GetTileAtPosition(Vector2 pos)
     {
         if (tileDictionary.TryGetValue(pos, out var clickedTile)) return clickedTile;
+        return null;
+    }
+
+    public void CheckWinning()
+    {
+        occupiedSlots--;
+        Tile lastTile = null;
+        if (occupiedSlots == 1)
+        {
+            lastTile = GetLastFilledTile();
+        }
+
+        if(lastTile != null)
+        {
+            Ingredient[] ing = lastTile.ingredients.ToArray();
+            if(ing[0].isBread && ing[ing.Length - 1].isBread)
+            {
+                Debug.Log("You win");
+                lastTile.OnMovedPieces();
+                level++;
+                NewGame();
+            }
+        }
+    }
+
+    private Tile GetLastFilledTile()
+    {
+        
+        foreach (Tile tile in tileDictionary.Values)
+        {
+            if (tile.ingredients.Count > 0)
+            {
+                return tile;
+            }
+        }
+
         return null;
     }
 }
