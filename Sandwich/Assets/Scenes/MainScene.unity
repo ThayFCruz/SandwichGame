@@ -155,9 +155,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9eb958b74d9e8b14da04ade66f0e8f36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 1006466644}
   ingredientsQuantity: 4
-  tile: {fileID: 2284844174402059359, guid: e215635ee5c92cf4fa9758f8ad0a1080, type: 3}
+  tile: {fileID: 5088588134631900248, guid: e215635ee5c92cf4fa9758f8ad0a1080, type: 3}
+  layouts:
+  - {fileID: 11400000, guid: e98e6a25c7d04ab4ca7ad8c37c639665, type: 2}
+  - {fileID: 11400000, guid: 79323b713d5013441895af7fd57ea12b, type: 2}
+  - {fileID: 11400000, guid: 3128c99d186b5864aafb76a0df148053, type: 2}
 --- !u!64 &106338511
 MeshCollider:
   m_ObjectHideFlags: 0

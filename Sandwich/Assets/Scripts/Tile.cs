@@ -1,17 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
-[Serializable]
 public class Tile : MonoBehaviour
 {
-    private GameObject prefab;
-    private bool isBread;
+    public List<Ingredient> ingredients;
+
+    void Start()
+    {
+       
+    }
+
 
     public void Setup()
     {
+        ingredients = new List<Ingredient>();
+    }
 
+    public void AddIngredient(Ingredient ingredient)
+    {
+        ingredients.Add(ingredient);
     }
 
 }
