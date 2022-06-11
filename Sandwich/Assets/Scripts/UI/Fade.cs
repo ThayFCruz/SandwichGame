@@ -4,20 +4,6 @@ using UnityEngine;
 
 public class Fade : MonoBehaviour
 {
-    public static Fade Instance;
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-
-    }
 
     public void StartFade(bool isFadeAway, CanvasGroup canvas)
     {

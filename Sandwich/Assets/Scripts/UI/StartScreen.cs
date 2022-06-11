@@ -5,44 +5,37 @@ using UnityEngine.UI;
 
 public class StartScreen : MonoBehaviour
 {
-    [SerializeField] LevelManager levelManager;
     [SerializeField] Button randomMode;
     [SerializeField] Button savedMode;
     [SerializeField] Button normalMode;
-    private CanvasGroup canvas;
-    private Fade fade;
+    [SerializeField] UiManager uiManager;
+    public CanvasGroup canvas;
 
     void Start()
     {
-        fade = Fade.Instance;
         canvas = GetComponent<CanvasGroup>();
         randomMode.onClick.AddListener(() => RandomMode());
         normalMode.onClick.AddListener(() => NormalMode());
-
-        savedMode.interactable = levelManager.GetSavedLayoutsCount() > 0;
         savedMode.onClick.AddListener(() => SavedMode());
+        uiManager.CheckSavedLayoutsButton();
+    }
+
+    public void Init(int savedLevels)
+    {
+        savedMode.interactable = savedLevels > 0;
     }
 
     private void RandomMode()
     {
-        levelManager.NewRandomGame();
-        fade.StartFade(true, canvas);
-
+        uiManager.RandomGame();
     }
 
     private void NormalMode()
     {
-        levelManager.InitNormalGame();
-        fade.StartFade(true,canvas);
+        uiManager.NormalGame();
     }
     private void SavedMode()
     {
-        levelManager.LoadSavedLayout();
-        fade.StartFade(true, canvas);
-    }
-
-    public void ShowWindow()
-    {
-        fade.StartFade(false, canvas);
+        uiManager.OpenSavedGame();
     }
 }

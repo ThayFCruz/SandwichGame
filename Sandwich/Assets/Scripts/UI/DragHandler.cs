@@ -9,6 +9,7 @@ public class DragHandler : MonoBehaviour
     public static DragHandler Instance;
     public bool canFlip = false;
     public Tile startingTile;
+    public bool interactable;
 
     public event Action<Tile> onMovedPieces = null;
 
@@ -29,5 +30,10 @@ public class DragHandler : MonoBehaviour
     {
         onMovedPieces?.Invoke(startingTile);
         canFlip = false;
+    }
+
+    public void SetInteractable(bool status)
+    {
+        interactable = status;
     }
 }

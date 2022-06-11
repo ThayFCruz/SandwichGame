@@ -7,6 +7,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GridSO normalLevels;
     [SerializeField] private GridManager gridManager;
     [SerializeField] private GridSO savedLevelsLayout;
+    [SerializeField] private UiManager uiManager;
+    [SerializeField] private int ingredientsQuantity = 4;
 
     private Mode mode;
     private int savedLevelsCount = 0;
@@ -16,7 +18,9 @@ public class LevelManager : MonoBehaviour
     private int currentNormalLevel = 0;
     private LevelLayout currentGameLayout;
 
-    enum Mode
+    public bool IsRandomMode => mode == Mode.RANDOM;
+
+    public enum Mode
     {
         NORMAL,
         RANDOM,
@@ -25,6 +29,7 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
+        ingredientsQuantity = PlayerPrefs.GetInt("ingredientsQuantity", 4);
         gridManager.CreateEmptyGrid();
         GetSavedLayoutsCount();
         GetNormalLayoutsCount();
@@ -39,6 +44,7 @@ public class LevelManager : MonoBehaviour
     public void InitNormalGame()
     {
         mode = Mode.NORMAL;
+        currentNormalLevel = PlayerPrefs.GetInt("normalLevel", 0);
         NewGameWithSO();
     }
     public void NewGameWithSO()
@@ -54,40 +60,53 @@ public class LevelManager : MonoBehaviour
                 break;
         }
         
-        gridManager.FillGridWithSO(currentGameLayout);
+        gridManager.FillGridWithSO(currentGameLayout, ingredientsQuantity);
     }
 
     public void NewRandomGame()
     {
         gridManager.CleanGrid();
         mode = Mode.RANDOM;
-        currentGameLayout = gridManager.FillGridRandomly();
+        currentGameLayout = gridManager.FillGridRandomly(ingredientsQuantity);
     }
 
-    public void WinGame()
+    public bool WinGame()
     {
-        gridManager.CleanGrid();
-
         switch (mode)
         {
             case Mode.SAVED:
-                if (currentSavedLevel <= savedLevelsLayout.levelLayouts.Count - 1)
+                if (currentSavedLevel < savedLevelsLayout.levelLayouts.Count - 1)
                 {
                     currentSavedLevel++;
-                    NewGameWithSO();
+                    return true;
                 }
-                break;
+                return false;
             case Mode.NORMAL:
-                if (currentNormalLevel <= normalLevels.levelLayouts.Count - 1)
+                if (currentNormalLevel < normalLevels.levelLayouts.Count - 1)
                 {
                     currentNormalLevel++;
-                    NewGameWithSO();
-                }  
-                break;
+                    PlayerPrefs.SetInt("normalLevel", currentNormalLevel);
+                    return true;
+                }
+                currentNormalLevel = 0;
+                PlayerPrefs.SetInt("normalLevel", 0);
+                return false;
             case Mode.RANDOM:
-                NewRandomGame();
-                break;
+                return true;
         }
+        return false;
+    }
+
+    public void NewGame()
+    {
+        if (IsRandomMode)
+        {
+            NewRandomGame();
+        }
+        else
+        {
+            NewGameWithSO();
+        }  
     }
 
     public void SaveLayout()
@@ -102,38 +121,49 @@ public class LevelManager : MonoBehaviour
         gridManager.CleanGrid();        
         if (savedLevelsCount != 0)
         {
-            currentGameLayout = savedLevelsLayout.levelLayouts[0];
-            RestartGame();
+            currentSavedLevel = 0;
+            NewGameWithSO();
         }
     }
 
-    public bool NextSavedLevel()
+    public void NextSavedLevel()
     {
-        if (mode != Mode.SAVED) return false;
-        if(currentSavedLevel >= savedLevelsCount-1)
-        {
-            return false;
-        }
-        else {
-            currentSavedLevel++;
-            LoadSavedLayout();
-            return true;
-        }
+        currentSavedLevel++;
+        NewGameWithSO();
+        CheckNextButton();
+        CheckPreviousButton();
     }
 
-    public bool PreviousSavedLevel()
+    public void PreviousSavedLevel()
+    { 
+        currentSavedLevel--;
+        NewGameWithSO();
+        CheckPreviousButton();
+        CheckNextButton();
+    }
+
+    public bool CheckPreviousButton()
     {
-        if (mode != Mode.SAVED) return false;
-        if (currentSavedLevel <= 0)
+        bool status = true;
+        if(currentSavedLevel <= 0 || mode != Mode.SAVED )
         {
-            return false;
+            status = false;
         }
-        else
+
+        uiManager.UpdatePrevioustButton(status);
+        return status;
+    }
+
+    public bool CheckNextButton()
+    {
+        bool status = true;
+        if (currentSavedLevel >= savedLevelsCount - 1 || mode != Mode.SAVED)
         {
-            currentSavedLevel--;
-            LoadSavedLayout();
-            return true;
+            status = false;
         }
+
+        uiManager.UpdateNextButton(status);
+        return status;
     }
 
     public int GetSavedLayoutsCount()
@@ -146,5 +176,18 @@ public class LevelManager : MonoBehaviour
     {
         normalLevelsCount = normalLevels.levelLayouts.Count;
         return normalLevelsCount;
+    }
+
+    public void SetIngredientsQuantity(int value)
+    {
+        ingredientsQuantity = value;
+        PlayerPrefs.SetInt("ingredientsQuantity", value);
+    }
+
+    public bool CanSaveLevel()
+    {
+        if (mode != Mode.SAVED) return true;
+
+        return false;
     }
 }

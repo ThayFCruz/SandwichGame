@@ -1,37 +1,121 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UiManager : MonoBehaviour
 {
-    [SerializeField] LevelManager levelManager;
-    [SerializeField] Button restartButton;
-    [SerializeField] Button saveLayout;
-    [SerializeField] Button loadLayout;
-    [SerializeField] Button nextLayout;
-    [SerializeField] Button previousLayout;
+    [SerializeField] private StartScreen startScreen;
+    [SerializeField] private WinScreen winScreen;
+    [SerializeField] private UiInGame gameUI;
+    [SerializeField] private PauseScreen pauseScreen;
+    [SerializeField] private LevelManager levelManager;
+    [SerializeField] private Fade fade;
+    private DragHandler dragHandler;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        restartButton.onClick.AddListener(() => levelManager.RestartGame());
-        saveLayout.onClick.AddListener(() => SaveButton());
-        loadLayout.onClick.AddListener(() => LoadButton());
-        nextLayout.onClick.AddListener(() => nextLayout.gameObject.SetActive(levelManager.NextSavedLevel()));
-        previousLayout.onClick.AddListener(() => previousLayout.gameObject.SetActive(levelManager.PreviousSavedLevel()));
+        dragHandler = DragHandler.Instance;
+    }
+    public void WinScreen()
+    {
+        gameUI.UpdateSaveButton(levelManager.CanSaveLevel());
+        winScreen.SetContinueButton(levelManager.WinGame());
+        ShowWindow(winScreen.canvas);
     }
 
-    private void LoadButton()
+    public void StartScreen()
     {
+        CheckSavedLayoutsButton();
+        ShowWindow(startScreen.canvas);
+    }
+
+    public void AfterWinningGame()
+    {
+        levelManager.NewGame();
+        CloseWindow(winScreen.canvas);
+    }
+
+    public void OpenSavedGame()
+    {
+        changeGameInteraction(false);
+        gameUI.UpdateSaveButton(false);
+        int savedLevels = levelManager.GetSavedLayoutsCount();
         levelManager.LoadSavedLayout();
-        nextLayout.gameObject.SetActive(levelManager.NextSavedLevel());
+        CloseWindow(startScreen.canvas);
+        gameUI.ShowLoadedGame(savedLevels);
     }
 
-    private void SaveButton()
+    public void RandomGame()
+    {
+        levelManager.NewRandomGame();
+        CloseWindow(startScreen.canvas);
+    }
+
+    public void NormalGame()
+    {
+        levelManager.InitNormalGame();
+        CloseWindow(startScreen.canvas);
+    }
+
+    public void PauseScreen()
+    {
+        pauseScreen.SetDifficultOption(levelManager.IsRandomMode);
+        ShowWindow(pauseScreen.canvas);
+    }
+
+    public void BackPauseScreen(int ingredientsQuantity)
+    {
+        levelManager.SetIngredientsQuantity(ingredientsQuantity);
+        CloseWindow(pauseScreen.canvas);
+    }
+  
+    public void SaveCurrentGame()
     {
         levelManager.SaveLayout();
-        saveLayout.gameObject.SetActive(false);
+    }
+
+    public void RestartGame()
+    {
+        levelManager.RestartGame();
     }
     
+    public void CheckSavedLayoutsButton()
+    {
+       int savedLevels = levelManager.GetSavedLayoutsCount();
+        startScreen.Init(savedLevels);
+    }
+    public void NextLayout()
+    {
+        levelManager.NextSavedLevel();
+    }
+
+    public void PreviousLayout()
+    {
+        levelManager.PreviousSavedLevel();
+    }
+
+    public void UpdateNextButton(bool status)
+    {
+        gameUI.UpdateNextButton(status);
+    }
+
+    public void UpdatePrevioustButton(bool status)
+    {
+        gameUI.UpdatePreviousButton(status);
+    }
+
+    public void CloseWindow(CanvasGroup canvas)
+    {
+        fade.StartFade(true, canvas);
+    }
+
+    public void ShowWindow(CanvasGroup canvas)
+    {
+        fade.StartFade(false, canvas);
+    }
+
+    public void changeGameInteraction(bool status)
+    {
+        dragHandler.SetInteractable(status);
+    }
 }

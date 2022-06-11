@@ -6,7 +6,7 @@ using UnityEngine;
 public class GridManager : MonoBehaviour
 {
 
-    [SerializeField] [Range(4, GridArea)] private int ingredientsQuantity = 4;
+   // [SerializeField] [Range(4, GridArea)] private int ingredientsQuantity = 4;
 
     [SerializeField] private Tile tile;
 
@@ -14,7 +14,7 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private DragHandler dragHandler;
 
-    [SerializeField] private WinScreen winScreen;
+    [SerializeField] private UiManager uiManager;
 
     private Dictionary<Vector2, Tile> tileDictionary;
 
@@ -39,7 +39,7 @@ public class GridManager : MonoBehaviour
                 var spawnedTile = Instantiate(tile, new Vector3(lin,0,col), Quaternion.identity);
                 spawnedTile.name = $"Tile {lin} {col}";
 
-                spawnedTile.Setup();
+                spawnedTile.Setup(new Vector2(lin,col));
 
                 tileDictionary[new Vector2(lin, col)] = spawnedTile;
             }
@@ -58,7 +58,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public void FillGridWithSO(LevelLayout grid)
+    public void FillGridWithSO(LevelLayout grid, int ingredientsQuantity)
     {
         ingredientsQuantity = grid.layouts.Count;
 
@@ -70,7 +70,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public LevelLayout FillGridRandomly(int breadsQuantity = 2)
+    public LevelLayout FillGridRandomly(int ingredientsQuantity, int breadsQuantity = 2)
     {
         List<Vector2> availableTiles = new List<Vector2>(tileDictionary.Keys);
 
@@ -103,10 +103,11 @@ public class GridManager : MonoBehaviour
 
         if(availableTiles.Count == 0)
         {
-            NewRandomTile();
+           availableTiles = NewRandomTile();
         }
 
         return availableTiles;
+       
     }
 
     public Tile GetTileAtPosition(Vector2 pos)
@@ -124,7 +125,7 @@ public class GridManager : MonoBehaviour
             if(ing[0].isBread && ing[ing.Length - 1].isBread)
             {
                 Debug.Log("You win");
-                winScreen.ShowWindow();
+                uiManager.WinScreen();
             }
         }
     }
@@ -132,12 +133,11 @@ public class GridManager : MonoBehaviour
     private List<Vector2> GetNeighbours(Tile tile)
     {
         List<Vector2> neighbours = new List<Vector2>();
-        Vector2[] neighboursOffsetPos = { new Vector2(0, 1), new Vector2(0, -1), new Vector2(1, 0), new Vector2(-1, 0) };
+        Vector2Int[] neighboursOffsetPos = { new Vector2Int(0, 1), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(-1, 0) };
 
         for(int i=0; i < neighboursOffsetPos.Length; i++)
         {
-            Vector3 tilePos = tile.transform.position;
-            Vector2 neighbourPosition = new Vector2(tilePos.x, tilePos.z) + neighboursOffsetPos[i];
+            Vector2 neighbourPosition = tile.tilePosition + neighboursOffsetPos[i];
 
             if(tileDictionary.ContainsKey(neighbourPosition))
             {

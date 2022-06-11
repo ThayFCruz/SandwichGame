@@ -31,3 +31,29 @@ MonoBehaviour:
       ingredient: {fileID: 6741710903494297399, guid: 7c4871f7aba3bbb49b0ff1700591f30e, type: 3}
     - position: {x: 2, y: 1}
       ingredient: {fileID: 207564385456496573, guid: 6528793be95d08344afab74352046e4b, type: 3}
+  - layouts:
+    - position: {x: 0, y: 2}
+      ingredient: {fileID: 1446452417464583081, guid: ca212ba2ffea07746aab6bf4ff657587, type: 3}
+    - position: {x: 0, y: 3}
+      ingredient: {fileID: 1446452417464583081, guid: ca212ba2ffea07746aab6bf4ff657587, type: 3}
+    - position: {x: 1, y: 3}
+      ingredient: {fileID: 6741710903494297399, guid: 7c4871f7aba3bbb49b0ff1700591f30e, type: 3}
+    - position: {x: 1, y: 2}
+      ingredient: {fileID: -5808601338367616438, guid: a5be859b42ee60148b2bf3bf21cff14b, type: 3}
+    - position: {x: 1, y: 1}
+      ingredient: {fileID: 207564385456496573, guid: 6528793be95d08344afab74352046e4b, type: 3}
+  - layouts:
+    - position: {x: 1, y: 0}
+      ingredient: {fileID: 1446452417464583081, guid: ca212ba2ffea07746aab6bf4ff657587, type: 3}
+    - position: {x: 2, y: 0}
+      ingredient: {fileID: 1446452417464583081, guid: ca212ba2ffea07746aab6bf4ff657587, type: 3}
+    - position: {x: 0, y: 0}
+      ingredient: {fileID: -7740465531606402850, guid: a440b479cc6140b41a0c55499042c9f5, type: 3}
+    - position: {x: 0, y: 1}
+      ingredient: {fileID: 7058950695778488517, guid: 5169a092c92b9d345981395a4e02e422, type: 3}
+    - position: {x: 1, y: 1}
+      ingredient: {fileID: -5808601338367616438, guid: a5be859b42ee60148b2bf3bf21cff14b, type: 3}
+    - position: {x: 3, y: 0}
+      ingredient: {fileID: -5347935520832511173, guid: 243c2ffa735decd44b80debd30986985, type: 3}
+    - position: {x: 1, y: 2}
+      ingredient: {fileID: -594998047619964410, guid: ffac4a5abd22ed14997660b65eb474a1, type: 3}

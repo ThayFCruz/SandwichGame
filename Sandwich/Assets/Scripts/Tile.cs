@@ -8,7 +8,7 @@ public class Tile : MonoBehaviour
 {
     private DragHandler dragHandler;
     public Stack<Ingredient> ingredients;
-
+    public Vector2 tilePosition;
     public List<string> i = new List<string>();
 
     void Start()
@@ -17,9 +17,10 @@ public class Tile : MonoBehaviour
     }
 
 
-    public void Setup()
+    public void Setup(Vector2 pos)
     {
         ingredients = new Stack<Ingredient>();
+        tilePosition = pos;
     }
 
     public void AddIngredient(Ingredient ingredient)
@@ -30,13 +31,13 @@ public class Tile : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if(ingredients.Count > 0)
+        if (dragHandler.interactable && ingredients.Count > 0)
         {
             if (dragHandler.canFlip && dragHandler.startingTile != this)
             {
                 if (IsNeighbour(dragHandler.startingTile))
                 {
-                    foreach(Ingredient ingredient in dragHandler.startingTile.ingredients)
+                    foreach (Ingredient ingredient in dragHandler.startingTile.ingredients)
                     {
                         AddIngredient(ingredient);
                     }
@@ -45,12 +46,11 @@ public class Tile : MonoBehaviour
                 }
             }
         }
-
     }
 
     private void OnMouseDown()
     {
-        if (!dragHandler.canFlip)
+        if (!dragHandler.canFlip && dragHandler.interactable)
         {
             dragHandler.startingTile = this;
             dragHandler.canFlip = true;
@@ -60,9 +60,12 @@ public class Tile : MonoBehaviour
 
     private void OnMouseUp()
     {
-        dragHandler.canFlip = false;
-        dragHandler.startingTile = null;
-        dragHandler.onMovedPieces -= IngredientsMoved;
+        if (dragHandler.interactable)
+        {
+            dragHandler.canFlip = false;
+            dragHandler.startingTile = null;
+            dragHandler.onMovedPieces -= IngredientsMoved;
+        }
     }
 
     private bool IsNeighbour(Tile tile)

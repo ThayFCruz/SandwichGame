@@ -1,0 +1,37 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PauseScreen : MonoBehaviour
+{
+    [SerializeField] private Button continueButton;
+    [SerializeField] private Button menuButton;
+    [SerializeField] private UiManager uiManager;
+    [SerializeField] private Slider difficultSlider;
+    public CanvasGroup canvas;
+
+    void Start()
+    {
+        difficultSlider.value = PlayerPrefs.GetInt("ingredientsQuantity",4);
+        canvas = GetComponent<CanvasGroup>();
+        continueButton.onClick.AddListener(() => ContinueButton());
+        menuButton.onClick.AddListener(() => MenuButton());
+    }
+
+    private void ContinueButton()
+    {
+        uiManager.BackPauseScreen((int)difficultSlider.value);
+    }
+
+    private void MenuButton()
+    {
+        uiManager.BackPauseScreen((int)difficultSlider.value);
+        uiManager.StartScreen();
+    }
+
+    public void SetDifficultOption(bool status)
+    {
+        difficultSlider.gameObject.SetActive(status);
+    }
+}

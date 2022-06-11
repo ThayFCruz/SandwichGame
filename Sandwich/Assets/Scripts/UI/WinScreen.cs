@@ -5,16 +5,14 @@ using UnityEngine.UI;
 
 public class WinScreen : MonoBehaviour
 {
-    [SerializeField] private LevelManager levelManager;
     [SerializeField] private Button continueButton;
     [SerializeField] private Button backButton;
-    [SerializeField] private StartScreen startScreen;
-    private CanvasGroup canvas;
-    private Fade fade;
+    [SerializeField] private UiManager uiManager;
+    [SerializeField] private GameObject congratualtionsMessage;
+    public CanvasGroup canvas;
 
     void Start()
     {
-        fade = Fade.Instance;
         canvas = GetComponent<CanvasGroup>();
         continueButton.onClick.AddListener(() => ContinueButton());
         backButton.onClick.AddListener(() => BackButton());
@@ -22,19 +20,20 @@ public class WinScreen : MonoBehaviour
 
     private void ContinueButton()
     {
-        levelManager.WinGame();
-        fade.StartFade(true, canvas);
+        uiManager.AfterWinningGame();
     }
 
     private void BackButton()
     {
-        startScreen.ShowWindow();
-        fade.StartFade(true, canvas);
+        uiManager.CloseWindow(canvas);
+        uiManager.StartScreen();
     }
 
-    public void ShowWindow()
+    public void SetContinueButton(bool status)
     {
-       fade.StartFade(false, canvas);
+        continueButton.gameObject.SetActive(status);
+        congratualtionsMessage.gameObject.SetActive(!status);
     }
+
 
 }
