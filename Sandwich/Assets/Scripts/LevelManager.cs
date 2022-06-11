@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    [SerializeField] private GridSO gridSo;
+    [SerializeField] private GridSO levelSO;
     [SerializeField] private GridManager gridManager;
     [SerializeField] private GridSO savedLayouts;
     private bool isRandomMode = false;
@@ -13,6 +13,11 @@ public class LevelManager : MonoBehaviour
     private int savedLevels = 0;
     private int currentSavedLevel = 0;
 
+    private void Start()
+    {
+        gridManager.CreateEmptyGrid();
+        NewRandomGame();
+    }
     private void RestartGame()
     {
         gridManager.CleanGrid();
@@ -23,7 +28,7 @@ public class LevelManager : MonoBehaviour
     {
         if (!isRandomMode)
         {
-            currentGameLayout = gridSo.levelLayouts[level];
+            currentGameLayout = levelSO.levelLayouts[level];
         }
         gridManager.FillGridWithSO(currentGameLayout);
         
@@ -31,15 +36,23 @@ public class LevelManager : MonoBehaviour
 
     private void NewRandomGame()
     {
+        isRandomMode = true;
         currentGameLayout = gridManager.FillGridRandomly();
     }
 
-    private void WinGame()
+    public void WinGame()
     {
-        gridManager.CleanGrid();
         if (!isRandomMode)
         {
+            if(level <= levelSO.levelLayouts.Count -1)
             level++;
+            gridManager.CleanGrid();
+            NewGameWithSO();
+        }
+        else
+        {
+            gridManager.CleanGrid();
+            NewRandomGame();
         }
     }
 

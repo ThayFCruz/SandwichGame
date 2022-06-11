@@ -7,11 +7,10 @@ using UnityEngine.EventSystems;
 public class DragHandler : MonoBehaviour
 {
     public static DragHandler Instance;
-    [SerializeField] GridManager gridManager;
     public bool canFlip = false;
     public Tile startingTile;
 
-    public event Action onMovedPieces = null;
+    public event Action<Tile> onMovedPieces = null;
 
     private void Awake()
     {
@@ -28,7 +27,7 @@ public class DragHandler : MonoBehaviour
 
     public void MovedPieces()
     {
-        startingTile.CleanTile();
-        onMovedPieces?.Invoke();
+        onMovedPieces?.Invoke(startingTile);
+        canFlip = false;
     }
 }

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c8b5c3b3c37dc745837cc2276027b05, type: 3}
+  m_Name: LevelLayouts
+  m_EditorClassIdentifier: 
+  levelLayouts:
+  - layouts:
+    - position: {x: 1, y: 1}
+      ingredient: {fileID: 1446452417464583081, guid: ca212ba2ffea07746aab6bf4ff657587, type: 3}
+    - position: {x: 2, y: 1}
+      ingredient: {fileID: 1446452417464583081, guid: ca212ba2ffea07746aab6bf4ff657587, type: 3}
+    - position: {x: 2, y: 2}
+      ingredient: {fileID: -5808601338367616438, guid: a5be859b42ee60148b2bf3bf21cff14b, type: 3}
+    - position: {x: 3, y: 2}
+      ingredient: {fileID: -7740465531606402850, guid: a440b479cc6140b41a0c55499042c9f5, type: 3}
+  - layouts:
+    - position: {x: 0, y: 0}
+      ingredient: {fileID: 1446452417464583081, guid: ca212ba2ffea07746aab6bf4ff657587, type: 3}
+    - position: {x: 0, y: 1}
+      ingredient: {fileID: 1446452417464583081, guid: ca212ba2ffea07746aab6bf4ff657587, type: 3}
+    - position: {x: 1, y: 1}
+      ingredient: {fileID: 6741710903494297399, guid: 7c4871f7aba3bbb49b0ff1700591f30e, type: 3}
+    - position: {x: 2, y: 1}
+      ingredient: {fileID: 207564385456496573, guid: 6528793be95d08344afab74352046e4b, type: 3}

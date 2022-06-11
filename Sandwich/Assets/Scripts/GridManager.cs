@@ -10,9 +10,11 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private Tile tile;
 
-    [SerializeField] private Ingredient ingredient;
+    [SerializeField] private IngredientManager ingredient;
 
     [SerializeField] private DragHandler dragHandler;
+
+    [SerializeField] private LevelManager levelManager;
 
     private Dictionary<Vector2, Tile> tileDictionary;
 
@@ -25,7 +27,6 @@ public class GridManager : MonoBehaviour
     void Start()
     {
         dragHandler.onMovedPieces += CheckWinning;
-        CreateEmptyGrid();
     }
 
     public void CreateEmptyGrid()
@@ -60,11 +61,11 @@ public class GridManager : MonoBehaviour
     public void FillGridWithSO(LevelLayout grid)
     {
         ingredientsQuantity = grid.layouts.Count;
+
         foreach (Item item in grid.layouts)
         {
-            Tile tile = GetTileAtPosition(item.Position);
-            ingredient.SetupIngredient(item.Ingredient);
-            tile.AddIngredient(ingredient);
+            Tile tile = GetTileAtPosition(item.position);
+            tile.AddIngredient(item.ingredient);
             occupiedTiles.Add(tile);
         }
     }
@@ -72,28 +73,40 @@ public class GridManager : MonoBehaviour
     public LevelLayout FillGridRandomly(int breadsQuantity = 2)
     {
         List<Vector2> availableTiles = new List<Vector2>(tileDictionary.Keys);
-        List<Tile> occupiedTiles = new List<Tile>();
 
         LevelLayout levelLayout = new LevelLayout();
+        levelLayout.layouts = new List<Item>();
+
 
         for (int i =0;i < ingredientsQuantity; i++)
         {
             Vector2 newPosition = availableTiles[Random.Range(0, availableTiles.Count)];
             Tile newTile = GetTileAtPosition(newPosition);
-
-            IngredientSO so = ingredient.SetupRandomIngredient(i < breadsQuantity);
-            newTile.AddIngredient(ingredient);
-
+            Ingredient ingr = ingredient.SetIngredient(i < breadsQuantity);
+            newTile.AddIngredient(ingr);
+            Item item = new Item(newPosition, ingr);
             occupiedTiles.Add(newTile);
-            newTile = occupiedTiles[Random.Range(0, occupiedTiles.Count)];
 
-            availableTiles = GetNeighbours(newTile);
-
-            Item item = new Item(newPosition, so);
+            availableTiles = NewRandomTile();
+            
             levelLayout.layouts.Add(item);
         }
         
         return levelLayout;
+    }
+
+    private List<Vector2> NewRandomTile()
+    {
+        Tile sortedTile = occupiedTiles[Random.Range(0, occupiedTiles.Count)];
+
+        List <Vector2> availableTiles = GetNeighbours(sortedTile);
+
+        if(availableTiles.Count == 0)
+        {
+            NewRandomTile();
+        }
+
+        return availableTiles;
     }
 
     public Tile GetTileAtPosition(Vector2 pos)
@@ -102,30 +115,18 @@ public class GridManager : MonoBehaviour
         return null;
     }
 
-    public void CheckWinning()
+    public void CheckWinning(Tile tile)
     {
+        FreeTile(tile);
         if (occupiedTiles.Count == 1)
         {
             Ingredient[] ing = occupiedTiles[0].ingredients.ToArray();
             if(ing[0].isBread && ing[ing.Length - 1].isBread)
             {
                 Debug.Log("You win");
+                levelManager.WinGame();
             }
         }
-    }
-
-    private Tile GetLastFilledTile()
-    {
-        
-        foreach (Tile tile in tileDictionary.Values)
-        {
-            if (tile.ingredients.Count > 0)
-            {
-                return tile;
-            }
-        }
-
-        return null;
     }
 
     private List<Vector2> GetNeighbours(Tile tile)
@@ -133,7 +134,7 @@ public class GridManager : MonoBehaviour
         List<Vector2> neighbours = new List<Vector2>();
         Vector2[] neighboursOffsetPos = { new Vector2(0, 1), new Vector2(0, -1), new Vector2(1, 0), new Vector2(-1, 0) };
 
-        for(int i=0; i < 2; i++)
+        for(int i=0; i < neighboursOffsetPos.Length; i++)
         {
             Vector3 tilePos = tile.transform.position;
             Vector2 neighbourPosition = new Vector2(tilePos.x, tilePos.z) + neighboursOffsetPos[i];

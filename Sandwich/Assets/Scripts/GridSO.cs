@@ -6,16 +6,25 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Data", menuName = "Grid")]
 public class GridSO : ScriptableObject
 {
-    public List<Item> layout;
+    public List<LevelLayout> levelLayouts;
+}
+
+[System.Serializable]
+public class LevelLayout
+{
+    public List<Item> layouts;
 }
 
 [System.Serializable]
 public class Item
 {
-    [SerializeField] private Vector2 position;
-    [SerializeField] private Ingredient ingredient;
+    [SerializeField] public Vector2 position;
+    [SerializeField] public Ingredient ingredient;
 
-    public Ingredient Ingredient => ingredient;
-    public Vector2 Position => position;
+    public Item(Vector2 pos, Ingredient ingr)
+    {
+        position = pos;
+        ingredient = ingr;
+    }
 
 }

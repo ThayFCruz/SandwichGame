@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
@@ -8,6 +9,7 @@ public class Tile : MonoBehaviour
     private DragHandler dragHandler;
     public Stack<Ingredient> ingredients;
 
+    public List<string> i = new List<string>();
 
     void Start()
     {
@@ -34,14 +36,12 @@ public class Tile : MonoBehaviour
             {
                 if (IsNeighbour(dragHandler.startingTile))
                 {
-                    dragHandler.canFlip = false;
                     foreach(Ingredient ingredient in dragHandler.startingTile.ingredients)
                     {
                         AddIngredient(ingredient);
                     }
 
                     dragHandler.MovedPieces();
-
                 }
             }
         }
@@ -50,15 +50,19 @@ public class Tile : MonoBehaviour
 
     private void OnMouseDown()
     {
-        dragHandler.startingTile = this;
-        dragHandler.canFlip = true;
-
+        if (!dragHandler.canFlip)
+        {
+            dragHandler.startingTile = this;
+            dragHandler.canFlip = true;
+            dragHandler.onMovedPieces += IngredientsMoved;
+        }
     }
 
     private void OnMouseUp()
     {
         dragHandler.canFlip = false;
         dragHandler.startingTile = null;
+        dragHandler.onMovedPieces -= IngredientsMoved;
     }
 
     private bool IsNeighbour(Tile tile)
@@ -74,6 +78,14 @@ public class Tile : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void IngredientsMoved(Tile tile)
+    {
+        if(tile == this)
+        {
+            CleanTile();
+        }
     }
 
     public void CleanTile()
