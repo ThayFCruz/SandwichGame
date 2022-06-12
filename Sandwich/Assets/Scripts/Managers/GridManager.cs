@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 
 public class GridManager : MonoBehaviour
 {
@@ -124,8 +124,7 @@ public class GridManager : MonoBehaviour
             Ingredient[] ing = occupiedTiles[0].ingredients.ToArray();
             if(ing[0].isBread && ing[ing.Length - 1].isBread)
             {
-                Debug.Log("You win");
-                uiManager.WinScreen();
+                occupiedTiles[0].transform.DOShakeScale(1f,1f,5,50).OnComplete(() => uiManager.WinScreen());
             }
         }
     }
@@ -137,7 +136,8 @@ public class GridManager : MonoBehaviour
 
         for(int i=0; i < neighboursOffsetPos.Length; i++)
         {
-            Vector2 neighbourPosition = tile.tilePosition + neighboursOffsetPos[i];
+            Vector3 tilePosition = tile.transform.position;
+            Vector2 neighbourPosition = new Vector2(tilePosition.x, tilePosition.z) + neighboursOffsetPos[i];
 
             if(tileDictionary.ContainsKey(neighbourPosition))
             {

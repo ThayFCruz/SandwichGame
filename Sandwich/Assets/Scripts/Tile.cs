@@ -3,47 +3,69 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using DG.Tweening;
 
 public class Tile : MonoBehaviour
 {
     private DragHandler dragHandler;
     public Stack<Ingredient> ingredients;
-    public Vector2 tilePosition;
-    public List<string> i = new List<string>();
-
+    public GameObject ingredientsGroup;
+    Quaternion originalRotation;
     void Start()
     {
         dragHandler = DragHandler.Instance;
+        originalRotation = ingredientsGroup.transform.rotation;
     }
 
 
     public void Setup(Vector2 pos)
     {
         ingredients = new Stack<Ingredient>();
-        tilePosition = pos;
     }
 
     public void AddIngredient(Ingredient ingredient)
     {
-        ingredients.Push(ingredient);
-        Instantiate(ingredient, transform.position + new Vector3(0, 0.2f * ingredients.Count, 0), Quaternion.identity, transform);
+        ingredients.Push(Instantiate(ingredient, transform.position + new Vector3(0, 0.1f, 0), Quaternion.identity, ingredientsGroup.transform));
+    }
+
+    public void Shake()
+    {
+        ingredientsGroup?.transform.DOShakeRotation(0.3f, new Vector3 (20,0), 10, 50).OnComplete( () => ingredientsGroup.transform.rotation = Quaternion.identity);
+        
     }
 
     private void OnMouseEnter()
     {
-        if (dragHandler.interactable && ingredients.Count > 0)
+        if (dragHandler.interactable) 
         {
-            if (dragHandler.canFlip && dragHandler.startingTile != this)
+            if (ingredients.Count > 0)
             {
-                if (IsNeighbour(dragHandler.startingTile))
+                if (dragHandler.canFlip && dragHandler.startingTile != this)
                 {
-                    foreach (Ingredient ingredient in dragHandler.startingTile.ingredients)
+                    Tile startingTile = dragHandler.startingTile;
+                    if (IsNeighbour(startingTile))
                     {
-                        AddIngredient(ingredient);
-                    }
 
-                    dragHandler.MovedPieces();
+                        startingTile?.ingredientsGroup.transform.DOJump(ingredientsGroup.transform.position + new Vector3(0, 0.1f * ingredients.Count + 0.1f * startingTile.ingredients.Count), 2, 1, 0.2f).OnPlay(() =>
+                        {
+                            startingTile.ingredientsGroup.transform.DORotate(new Vector3(-180, 0, 0), 0.3f).OnComplete(() =>
+                            {
+                                foreach (Ingredient ingredient in startingTile.ingredients)
+                                {
+                                    ingredient.transform.SetParent(ingredientsGroup.transform);
+                                    ingredients.Push(ingredient);
+                                }
+                                dragHandler.MovedPieces();
+                            });
+                        });
+
+                        //ingredientsGroup.transform.position = this.transform.position + new Vector3(0, ingredients.Count * 0.2f, 0);
+                    }
                 }
+            }
+            else
+            {
+                dragHandler.MovedWrong();
             }
         }
     }
@@ -63,9 +85,8 @@ public class Tile : MonoBehaviour
         if (dragHandler.interactable)
         {
             dragHandler.canFlip = false;
-            dragHandler.startingTile = null;
-            dragHandler.onMovedPieces -= IngredientsMoved;
         }
+
     }
 
     private bool IsNeighbour(Tile tile)
@@ -85,15 +106,19 @@ public class Tile : MonoBehaviour
 
     private void IngredientsMoved(Tile tile)
     {
-        if(tile == this)
+        if (tile == this)
         {
+            ingredients.Clear();
+            ingredientsGroup.transform.localPosition = new Vector3(0, 0.15f, 0);
+            ingredientsGroup.transform.DORotate(new Vector3(0, 0, 0), 0f);
             CleanTile();
+            dragHandler.onMovedPieces -= IngredientsMoved;
         }
     }
 
     public void CleanTile()
     {
-        foreach (Transform child in transform)
+        foreach (Transform child in ingredientsGroup.transform)
         {
             Destroy(child.gameObject);
         }
