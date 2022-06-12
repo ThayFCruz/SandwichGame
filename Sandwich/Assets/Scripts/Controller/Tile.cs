@@ -25,7 +25,7 @@ public class Tile : MonoBehaviour
 
     public void AddIngredient(Ingredient ingredient)
     {
-        ingredients.Push(Instantiate(ingredient, transform.position + new Vector3(0, 0.1f, 0), Quaternion.identity, ingredientsGroup.transform));
+        ingredients.Push(Instantiate(ingredient, ingredientsGroup.transform.position + new Vector3(0, 0.2f * ingredients.Count, 0), Quaternion.identity, ingredientsGroup.transform));
     }
 
     public void RemoveIngredients()
@@ -76,9 +76,9 @@ public class Tile : MonoBehaviour
                     {
                         //animating the movement of the group of ingredients to the new tile
                         startingTile?.ingredientsGroup.transform.DOJump(ingredientsGroup.transform.position + new Vector3(0, 0.1f * ingredients.Count + 0.1f * startingTile.ingredients.Count), 2, 1, 0.2f)
-                        .OnPlay(() =>
-                        {
-                            startingTile.ingredientsGroup.transform.DORotate(new Vector3(-180, 0, 0), 0.3f)
+                        .OnPlay(() => {
+                            startingTile.ingredientsGroup.transform.Rotate(new Vector3(-180, 0, 0));
+                        })
                             .OnComplete(() =>
                             {
                                 //after the animation adding each new ingredient to the tile list
@@ -91,8 +91,6 @@ public class Tile : MonoBehaviour
                                 //used to shoot the event when the pieces are already moved between tiles
                                 dragHandler.PiecesMoved();
                             });
-                        });
-
                     }
                 }
             }
@@ -137,7 +135,7 @@ public class Tile : MonoBehaviour
 
             //needs to return to the original position because it was used to move the ingredients to another tile 
             ingredientsGroup.transform.localPosition = new Vector3(0, 0.15f, 0);
-            ingredientsGroup.transform.DORotate(new Vector3(0, 0, 0), 0f);
+            ingredientsGroup.transform.Rotate(new Vector3(0, 0, 0));
 
             RemoveIngredients();
             dragHandler.onMovedPieces -= IngredientsMoved;
