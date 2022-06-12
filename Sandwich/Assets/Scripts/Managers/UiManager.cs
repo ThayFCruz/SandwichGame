@@ -47,14 +47,21 @@ public class UiManager : MonoBehaviour
 
     public void CloseWindow(CanvasGroup canvas)
     {
+        changeGameInteraction(true);
         fade.StartFade(true, canvas);
     }
 
     public void ShowWindow(CanvasGroup canvas)
     {
+        changeGameInteraction(false);
         fade.StartFade(false, canvas);
     }
 
+    //removing the player interaction with the grid
+    public void changeGameInteraction(bool status)
+    {
+        dragHandler.SetInteractable(status);
+    }
 
     #endregion
 
@@ -73,7 +80,7 @@ public class UiManager : MonoBehaviour
         gameUI.UpdateSaveButton(false);
         int savedLevels = levelManager.GetSavedLayoutsCount();
         levelManager.LoadSavedLayout();
-        CloseWindow(startScreen.canvas);
+        fade.StartFade(true, startScreen.canvas);
         gameUI.ShowLoadedGame(savedLevels);
     }
 
@@ -128,11 +135,6 @@ public class UiManager : MonoBehaviour
         gameUI.UpdatePreviousButton(status);
     }
 
-    //removing the player interaction with the grid when seeing the saved layouts list
-    public void changeGameInteraction(bool status)
-    {
-        dragHandler.SetInteractable(status);
-    }
     #endregion
 
    

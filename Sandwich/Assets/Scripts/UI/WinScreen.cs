@@ -9,11 +9,10 @@ public class WinScreen : MonoBehaviour
     [SerializeField] private Button backButton;
     [SerializeField] private UiManager uiManager;
     [SerializeField] private GameObject congratualtionsMessage;
-    public CanvasGroup canvas;
+    [SerializeField] public CanvasGroup canvas;
 
     void Start()
     {
-        canvas = GetComponent<CanvasGroup>();
         continueButton.onClick.AddListener(() => ContinueButton());
         backButton.onClick.AddListener(() => BackButton());
     }

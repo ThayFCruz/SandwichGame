@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Fade : MonoBehaviour
 {
@@ -21,9 +22,11 @@ public class Fade : MonoBehaviour
             }
             canvas.interactable = false;
             canvas.blocksRaycasts = false;
+            canvas.transform.gameObject.SetActive(false);
         }
         else
         {
+            canvas.transform.gameObject.SetActive(true);
             for (float i = 0.8f; i <= 1; i += Time.deltaTime)
             {
                 canvas.alpha = i;

@@ -9,11 +9,10 @@ public class StartScreen : MonoBehaviour
     [SerializeField] Button savedMode;
     [SerializeField] Button normalMode;
     [SerializeField] UiManager uiManager;
-    public CanvasGroup canvas;
+    [SerializeField] public CanvasGroup canvas;
 
     void Start()
     {
-        canvas = GetComponent<CanvasGroup>();
         randomMode.onClick.AddListener(() => RandomMode());
         normalMode.onClick.AddListener(() => NormalMode());
         savedMode.onClick.AddListener(() => SavedMode());

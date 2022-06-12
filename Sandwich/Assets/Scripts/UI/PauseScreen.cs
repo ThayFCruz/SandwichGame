@@ -9,12 +9,11 @@ public class PauseScreen : MonoBehaviour
     [SerializeField] private Button menuButton;
     [SerializeField] private UiManager uiManager;
     [SerializeField] private Slider difficultSlider;
-    public CanvasGroup canvas;
+    [SerializeField] public CanvasGroup canvas;
 
     void Start()
     {
         difficultSlider.value = PlayerPrefs.GetInt("ingredientsQuantity",4);
-        canvas = GetComponent<CanvasGroup>();
         continueButton.onClick.AddListener(() => ContinueButton());
         menuButton.onClick.AddListener(() => MenuButton());
     }
