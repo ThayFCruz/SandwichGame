@@ -27,9 +27,10 @@ public class PauseScreen : MonoBehaviour
     private void MenuButton()
     {
         uiManager.BackPauseScreen((int)difficultSlider.value);
-        uiManager.StartScreen();
+        uiManager.ShowStartScreen();
     }
 
+    //defines if the slider of ingredients quantity shoul be visible (only visible in random mode)
     public void SetDifficultOption(bool status)
     {
         difficultSlider.gameObject.SetActive(status);

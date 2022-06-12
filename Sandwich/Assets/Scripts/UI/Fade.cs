@@ -32,7 +32,5 @@ public class Fade : MonoBehaviour
             canvas.interactable = true;
             canvas.blocksRaycasts = true;
         }
-
-
     }
 }

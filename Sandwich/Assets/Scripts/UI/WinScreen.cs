@@ -18,17 +18,20 @@ public class WinScreen : MonoBehaviour
         backButton.onClick.AddListener(() => BackButton());
     }
 
+    //continue to next lvel
     private void ContinueButton()
     {
         uiManager.AfterWinningGame();
     }
 
+    //back to menu
     private void BackButton()
     {
         uiManager.CloseWindow(canvas);
-        uiManager.StartScreen();
+        uiManager.ShowStartScreen();
     }
 
+    //deefines if exists more levels to continue or not
     public void SetContinueButton(bool status)
     {
         continueButton.gameObject.SetActive(status);

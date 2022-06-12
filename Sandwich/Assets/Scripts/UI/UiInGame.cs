@@ -17,34 +17,65 @@ public class UiInGame : MonoBehaviour
     {
         overlay.SetActive(false);
         restartButton.onClick.AddListener(() => RestartGame());
-        saveLayout.onClick.AddListener(() => SaveButton());
+        saveLayout.onClick.AddListener(() => SaveCurrentLevelButton());
         nextLayout.onClick.AddListener(() => NextLayout());
         previousLayout.onClick.AddListener(() => PreviousLayout());
         startButton.onClick.AddListener(() => StartSavedGame());
         pauseButton.onClick.AddListener(() => PauseGame());
     }
 
-    private void SaveButton()
+    #region Saving Game
+    private void SaveCurrentLevelButton()
     {
         uiManager.SaveCurrentGame();
         saveLayout.gameObject.SetActive(false);
     }
+
+    public void UpdateSaveButton(bool status)
+    {
+        saveLayout.gameObject.SetActive(status);
+    }
+
+    #endregion
 
     private void RestartGame()
     {
         uiManager.RestartGame();
     }
 
+    private void PauseGame()
+    {
+        uiManager.ShowPauseScreen();
+    }
+
+    #region loading games and scrolling the saved layouts list
+
+    public void ShowLoadedGame(int savedLevels)
+    {
+        overlay.SetActive(true);
+        startButton.gameObject.SetActive(true);
+        nextLayout.gameObject.SetActive(savedLevels > 1);
+    }
     private void NextLayout()
     {
         uiManager.NextLayout();
+    }
+
+    public void UpdateNextButton(bool status)
+    {
+        nextLayout.gameObject.SetActive(status);
     }
 
     private void PreviousLayout()
     {
         uiManager.PreviousLayout();
     }
+    public void UpdatePreviousButton(bool status)
+    {
+        previousLayout.gameObject.SetActive(status);
+    }
 
+    //when the player decides to play one of teh saved games
     private void StartSavedGame()
     {
         uiManager.changeGameInteraction(true);
@@ -54,29 +85,5 @@ public class UiInGame : MonoBehaviour
         startButton.gameObject.SetActive(false);
     }
 
-    private void PauseGame()
-    {
-        uiManager.PauseScreen();
-    }
-
-    public void ShowLoadedGame(int savedLevels)
-    {
-        overlay.SetActive(true);
-        startButton.gameObject.SetActive(true);
-        nextLayout.gameObject.SetActive(savedLevels > 1);
-    }
-
-    public void UpdateNextButton(bool status)
-    {
-        nextLayout.gameObject.SetActive(status);
-    }
-    public void UpdatePreviousButton(bool status)
-    {
-        previousLayout.gameObject.SetActive(status);
-    }
-
-    public void UpdateSaveButton(bool status)
-    {
-        saveLayout.gameObject.SetActive(status);
-    }
+    #endregion
 }

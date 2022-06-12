@@ -35,18 +35,55 @@ public class LevelManager : MonoBehaviour
         GetNormalLayoutsCount();
     }
 
+    //both used to manage the lists of saved and normal game layouts 
+    public int GetSavedLayoutsCount()
+    {
+        savedLevelsCount = savedLevelsLayout.levelLayouts.Count;
+        return savedLevelsCount;
+    }
+
+    public int GetNormalLayoutsCount()
+    {
+        normalLevelsCount = normalLevels.levelLayouts.Count;
+        return normalLevelsCount;
+    }
+
+    //restart current level
     public void RestartGame()
     {
         gridManager.CleanGrid();
         NewGameWithSO();
     }
 
+    //new game in normal mode
     public void InitNormalGame()
     {
         mode = Mode.NORMAL;
         currentNormalLevel = PlayerPrefs.GetInt("normalLevel", 0);
         NewGameWithSO();
     }
+
+    //new game in random mode
+    public void NewRandomGame()
+    {
+        gridManager.CleanGrid();
+        mode = Mode.RANDOM;
+        currentGameLayout = gridManager.FillGridRandomly(ingredientsQuantity);
+    }
+
+    //new game in saved mode
+    public void LoadSavedLayout()
+    {
+        mode = Mode.SAVED;
+        gridManager.CleanGrid();
+        if (savedLevelsCount != 0)
+        {
+            currentSavedLevel = 0;
+            NewGameWithSO();
+        }
+    }
+
+    //fill grid with a layout already set in SO
     public void NewGameWithSO()
     {
         gridManager.CleanGrid();
@@ -63,13 +100,7 @@ public class LevelManager : MonoBehaviour
         gridManager.FillGridWithSO(currentGameLayout, ingredientsQuantity);
     }
 
-    public void NewRandomGame()
-    {
-        gridManager.CleanGrid();
-        mode = Mode.RANDOM;
-        currentGameLayout = gridManager.FillGridRandomly(ingredientsQuantity);
-    }
-
+    //manage the win in each game mode
     public bool WinGame()
     {
         switch (mode)
@@ -97,7 +128,8 @@ public class LevelManager : MonoBehaviour
         return false;
     }
 
-    public void NewGame()
+    //when the player choose to continue playing after winning a level
+    public void NewGameAfterWinning()
     {
         if (IsRandomMode)
         {
@@ -109,23 +141,15 @@ public class LevelManager : MonoBehaviour
         }  
     }
 
+    //when the player asks to save the current level
     public void SaveLayout()
     {
         savedLevelsLayout.levelLayouts.Add(currentGameLayout);
         GetSavedLayoutsCount();
     }
 
-    public void LoadSavedLayout()
-    {
-        mode = Mode.SAVED;
-        gridManager.CleanGrid();        
-        if (savedLevelsCount != 0)
-        {
-            currentSavedLevel = 0;
-            NewGameWithSO();
-        }
-    }
 
+    //both methods behind are used by the player when scrolling through saved games list
     public void NextSavedLevel()
     {
         currentSavedLevel++;
@@ -142,6 +166,7 @@ public class LevelManager : MonoBehaviour
         CheckNextButton();
     }
 
+    //both used to manage next and previous buttons availability
     public bool CheckPreviousButton()
     {
         bool status = true;
@@ -166,24 +191,14 @@ public class LevelManager : MonoBehaviour
         return status;
     }
 
-    public int GetSavedLayoutsCount()
-    {
-        savedLevelsCount = savedLevelsLayout.levelLayouts.Count;
-        return savedLevelsCount;
-    }
-
-    public int GetNormalLayoutsCount()
-    {
-        normalLevelsCount = normalLevels.levelLayouts.Count;
-        return normalLevelsCount;
-    }
-
+    //when the player choose the qtt of ingredients in random levels
     public void SetIngredientsQuantity(int value)
     {
         ingredientsQuantity = value;
         PlayerPrefs.SetInt("ingredientsQuantity", value);
     }
 
+    //making the player unable to save an already saved level
     public bool CanSaveLevel()
     {
         if (mode != Mode.SAVED) return true;

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UiManager : MonoBehaviour
 {
+    //used to manage the UI interactions between different screens and interact them with level manager
     [SerializeField] private StartScreen startScreen;
     [SerializeField] private WinScreen winScreen;
     [SerializeField] private UiInGame gameUI;
@@ -16,22 +17,53 @@ public class UiManager : MonoBehaviour
     {
         dragHandler = DragHandler.Instance;
     }
-    public void WinScreen()
+
+    #region Show and close windows region
+    public void ShowWinScreen()
     {
         gameUI.UpdateSaveButton(levelManager.CanSaveLevel());
         winScreen.SetContinueButton(levelManager.WinGame());
         ShowWindow(winScreen.canvas);
     }
 
-    public void StartScreen()
+    public void ShowStartScreen()
     {
         CheckSavedLayoutsButton();
         ShowWindow(startScreen.canvas);
     }
 
+    public void ShowPauseScreen()
+    {
+        pauseScreen.SetDifficultOption(levelManager.IsRandomMode);
+        ShowWindow(pauseScreen.canvas);
+    }
+
+    //after returning back to game from pause screen
+    public void BackPauseScreen(int ingredientsQuantity)
+    {
+        levelManager.SetIngredientsQuantity(ingredientsQuantity);
+        CloseWindow(pauseScreen.canvas);
+    }
+
+    public void CloseWindow(CanvasGroup canvas)
+    {
+        fade.StartFade(true, canvas);
+    }
+
+    public void ShowWindow(CanvasGroup canvas)
+    {
+        fade.StartFade(false, canvas);
+    }
+
+
+    #endregion
+
+    #region new game in different modes
+
+    //new game after the victory
     public void AfterWinningGame()
     {
-        levelManager.NewGame();
+        levelManager.NewGameAfterWinning();
         CloseWindow(winScreen.canvas);
     }
 
@@ -57,28 +89,20 @@ public class UiManager : MonoBehaviour
         CloseWindow(startScreen.canvas);
     }
 
-    public void PauseScreen()
-    {
-        pauseScreen.SetDifficultOption(levelManager.IsRandomMode);
-        ShowWindow(pauseScreen.canvas);
-    }
-
-    public void BackPauseScreen(int ingredientsQuantity)
-    {
-        levelManager.SetIngredientsQuantity(ingredientsQuantity);
-        CloseWindow(pauseScreen.canvas);
-    }
-  
-    public void SaveCurrentGame()
-    {
-        levelManager.SaveLayout();
-    }
-
     public void RestartGame()
     {
         levelManager.RestartGame();
     }
+    #endregion
+
+    #region managing the saving games
+
+    public void SaveCurrentGame()
+    {
+        levelManager.SaveLayout();
+    }
     
+    //checking if exists any saved layout to enable this option or not
     public void CheckSavedLayoutsButton()
     {
        int savedLevels = levelManager.GetSavedLayoutsCount();
@@ -104,18 +128,12 @@ public class UiManager : MonoBehaviour
         gameUI.UpdatePreviousButton(status);
     }
 
-    public void CloseWindow(CanvasGroup canvas)
-    {
-        fade.StartFade(true, canvas);
-    }
-
-    public void ShowWindow(CanvasGroup canvas)
-    {
-        fade.StartFade(false, canvas);
-    }
-
+    //removing the player interaction with the grid when seeing the saved layouts list
     public void changeGameInteraction(bool status)
     {
         dragHandler.SetInteractable(status);
     }
+    #endregion
+
+   
 }
